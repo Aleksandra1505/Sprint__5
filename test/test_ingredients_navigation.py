@@ -2,18 +2,20 @@ from selenium.webdriver.common.by import By
 from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from locators import CONSTRUCTOR_BUNS_SECTION, CONSTRUCTOR_SAUCES_SECTION, CONSTRUCTOR_FILLINGS_SECTION
+from locators import CONSTRUCTOR_BUNS_SECTION, CONSTRUCTOR_SAUCES_SECTION, CONSTRUCTOR_FILLINGS_SECTION, HEADER_BUNS_SECTION, HEADER_SAUCES_SECTION, HEADER_FILLINGS_SECTION, SELECT_TAB_CONSTRUCTOR
 import time
-
-#Проверка перехода к заданному разделу
-def check_section_navigation(driver, section_locator):
-    driver.find_element(*section_locator).click()
 
 # 1. проверка перехода к разделу Начинки
 def test_navigation_to_fillings():
     driver = webdriver.Chrome()
     driver.get("https://stellarburgers.nomoreparties.site/")
-    check_section_navigation(driver, CONSTRUCTOR_FILLINGS_SECTION)
+
+    driver.find_element(*CONSTRUCTOR_FILLINGS_SECTION).click()
+
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//span[text()='Начинки']")))
+
+    assert driver.find_element(*SELECT_TAB_CONSTRUCTOR).text == driver.find_element(*HEADER_FILLINGS_SECTION).text
+
     time.sleep(2)
     driver.quit()
 
@@ -21,9 +23,11 @@ def test_navigation_to_fillings():
 def test_navigation_to_buns():
     driver = webdriver.Chrome()
     driver.get("https://stellarburgers.nomoreparties.site/")
-    check_section_navigation(driver, CONSTRUCTOR_FILLINGS_SECTION)
-    time.sleep(4)
-    check_section_navigation(driver, CONSTRUCTOR_BUNS_SECTION)
+
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//span[text()='Булки']")))
+
+    assert driver.find_element(*SELECT_TAB_CONSTRUCTOR).text == driver.find_element(*HEADER_BUNS_SECTION).text
+
     time.sleep(2)
     driver.quit()
 
@@ -31,7 +35,13 @@ def test_navigation_to_buns():
 def test_navigation_to_sauces():
     driver = webdriver.Chrome()
     driver.get("https://stellarburgers.nomoreparties.site/")
-    check_section_navigation(driver, CONSTRUCTOR_SAUCES_SECTION)
+
+    driver.find_element(*CONSTRUCTOR_SAUCES_SECTION).click()
+
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//span[text()='Соусы']")))
+
+    assert driver.find_element(*SELECT_TAB_CONSTRUCTOR).text == driver.find_element(*HEADER_SAUCES_SECTION).text
+
     time.sleep(2)
     driver.quit()
 
