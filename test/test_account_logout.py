@@ -1,31 +1,31 @@
+import pytest
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from urls import MAIN_PAGE_URL, PROFILE_PAGE_URL, LOGIN_PAGE_URL
+from data import LOGIN_EMAIL, LOGIN_PASSWORD
 from locators import LOGIN_EMAIL_INPUT, LOGIN_PASSWORD_INPUT, LOGIN_BUTTON_MAIN_PAGE, LOGIN_BUTTON_AUTH_PAGE, PROFILE_LINK, LOGOUT_BUTTON
-import time
 
-driver = webdriver.Chrome()
-driver.get("https://stellarburgers.nomoreparties.site/")
+class TestLogout:
+    def test_logout(self, driver):
+        driver.get(LOGIN_PAGE_URL)
 
-# Авторизация
-driver.find_element(*LOGIN_BUTTON_MAIN_PAGE).click()
-driver.find_element(*LOGIN_EMAIL_INPUT).send_keys("antropova15@yande.ru")
-driver.find_element(*LOGIN_PASSWORD_INPUT).send_keys("111111")
-driver.find_element(*LOGIN_BUTTON_AUTH_PAGE).click()
-WebDriverWait(driver, 10).until(EC.url_to_be("https://stellarburgers.nomoreparties.site/"))
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located(LOGIN_BUTTON_AUTH_PAGE)).click()
 
-# Переход в профиль
-driver.find_element(*PROFILE_LINK).click()
-WebDriverWait(driver, 10).until(EC.url_to_be("https://stellarburgers.nomoreparties.site/account/profile"))
-assert "https://stellarburgers.nomoreparties.site/account/profile" in driver.current_url, "Не удалось перейти в личный кабинет."
-time.sleep(2)
-WebDriverWait(driver, 10).until(EC.visibility_of_element_located(LOGOUT_BUTTON))
+        # Авторизация
+        driver.find_element(*LOGIN_EMAIL_INPUT).send_keys(LOGIN_EMAIL)
+        driver.find_element(*LOGIN_PASSWORD_INPUT).send_keys(LOGIN_PASSWORD)
+        driver.find_element(*LOGIN_BUTTON_AUTH_PAGE).click()
+        WebDriverWait(driver, 10).until(EC.url_to_be(MAIN_PAGE_URL))
 
-# Разлогин
-driver.find_element(*LOGOUT_BUTTON).click()
-time.sleep(2)
-WebDriverWait(driver, 5).until(EC.url_to_be("https://stellarburgers.nomoreparties.site/login"))
-assert driver.current_url == 'https://stellarburgers.nomoreparties.site/login', "Не удалось выйти из аккаунта."
+        # Переход в профиль
+        driver.find_element(*PROFILE_LINK).click()
+        WebDriverWait(driver, 10).until(EC.url_to_be(PROFILE_PAGE_URL))
 
-driver.quit()
+        # Разлогин
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located(LOGOUT_BUTTON))
+        driver.find_element(*LOGOUT_BUTTON).click()
+
+        WebDriverWait(driver, 5).until(EC.url_to_be(LOGIN_PAGE_URL))
+        assert driver.current_url == LOGIN_PAGE_URL, "Не удалось выйти из аккаунта."
