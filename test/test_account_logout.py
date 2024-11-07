@@ -1,12 +1,11 @@
 import pytest
-from selenium.webdriver.common.by import By
-from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from urls import MAIN_PAGE_URL, PROFILE_PAGE_URL, LOGIN_PAGE_URL
 from data import LOGIN_EMAIL, LOGIN_PASSWORD
-from locators import LOGIN_EMAIL_INPUT, LOGIN_PASSWORD_INPUT, LOGIN_BUTTON_MAIN_PAGE, LOGIN_BUTTON_AUTH_PAGE, PROFILE_LINK, LOGOUT_BUTTON
+from locators import LOGIN_EMAIL_INPUT, LOGIN_PASSWORD_INPUT, LOGIN_BUTTON_AUTH_PAGE, PROFILE_LINK, LOGOUT_BUTTON
 
+@pytest.mark.usefixtures("driver")
 class TestLogout:
     def test_logout(self, driver):
         driver.get(LOGIN_PAGE_URL)
